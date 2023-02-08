@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "dist",
+    "target": "es6",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipDefaultLibCheck": true
+  }, 
+  "include": [
+    "src/"
+  ]
+}
