@@ -3,11 +3,14 @@
     "module": "CommonJS",
     "outDir": "dist",
     "target": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "strict": true,
     "skipDefaultLibCheck": true
+    
   }, 
   "include": [
     "src/"
-  ]
+, "prisma/seed.ts"  ]
 }

@@ -8,21 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.todoDelete = exports.todoUpdate = exports.todoCreate = exports.todoShow = exports.todoIndex = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
-//const todos = require('../models/todo');
-//todoIndex, todoShow, todoCreate, todoUpdate, todoDelete
+const db_server_1 = __importDefault(require("../utils/db.server"));
 const todoIndex = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // res.status(200).send(todos);
-    const users = yield prisma.todo.findMany();
-    res.json(users);
+    const todos = yield db_server_1.default.todo.findMany();
+    res.json(todos);
 });
 exports.todoIndex = todoIndex;
 const todoShow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const todo = yield prisma.todo.findUnique({
+    const todo = yield db_server_1.default.todo.findUnique({
         where: {
             id: parseInt(id),
         }
@@ -34,7 +33,7 @@ const todoShow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.todoShow = todoShow;
 const todoCreate = (req, res) => {
     const { name, email, password, title } = req.body;
-    const result = prisma.user.create({
+    const result = db_server_1.default.user.create({
         data: {
             name: name,
             email: email,
@@ -46,38 +45,28 @@ const todoCreate = (req, res) => {
             },
         },
     });
-    // todos.push(todo);
     res.status(201).json({ result });
 };
 exports.todoCreate = todoCreate;
 const todoUpdate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const todoData = yield prisma.todo.findUnique({
+    const todoData = yield db_server_1.default.todo.findUnique({
         where: { id: Number(id) || undefined },
     });
-    const updatedTodo = yield prisma.todo.update({
+    const updatedTodo = yield db_server_1.default.todo.update({
         where: { id: Number(id) || undefined },
         data: { title: req.body.title || undefined },
     });
-    // const todo = todos.find(((t: { id: number; })=> t.id === parseInt(req.params.id)));
-    // if(!todo) res.status(404).send('The todo with the given ID was not found');
-    // else todo.title = req.body.title;
     res.status(200).send('Todo updated successfully').json({ updatedTodo });
 });
 exports.todoUpdate = todoUpdate;
 const todoDelete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const todo = yield prisma.todo.delete({
+    const todo = yield db_server_1.default.todo.delete({
         where: {
             id: Number(id),
         },
     });
     res.json(todo);
-    // const todo = todos.find(((t: { id: number; })=> t.id === parseInt(req.params.id)));
-    // if(!todo) res.status(404).send('The todo with the given ID was not found');
-    // else {
-    //     const index = todos.indexOf(todo);
-    //     todos.splice(index, 1);
-    // }
 });
 exports.todoDelete = todoDelete;

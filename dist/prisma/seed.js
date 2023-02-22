@@ -8,9 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_server_1 = __importDefault(require("../src/utils/db.server"));
 const userData = [
     {
         name: 'bobby',
@@ -54,50 +56,20 @@ const userData = [
 ];
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        // ... you will write your Prisma Client queries here
         for (const u of userData) {
-            const user = yield prisma.user.create({
+            const user = yield db_server_1.default.user.create({
                 data: u,
             });
             console.log(`Created user with id: ${user.id}`);
         }
-        //   await prisma.user.create({
-        //     data: {
-        //       name: 'bob',
-        //       email: 'bob123@email.com',
-        //       password: '123456',
-        //       todos: {
-        //         create: {
-        //             title: 'Todo with prisma',
-        //         },
-        //       },
-        //     }, 
-        //   }
-        //   )
-        //   const allUsers = await prisma.user.findMany({
-        //     include: {
-        //       todos: true,
-        //     },
-        //   })
-        //   console.dir(allUsers, { depth: null })
-        //   const todo = await prisma.todo.update({
-        //     where: { id: 1 },
-        //     data: { title: 'updated title' },
-        //   })
-        //   console.log(todo)
     });
 }
 main()
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield prisma.$disconnect();
+    yield db_server_1.default.$disconnect();
 }))
     .catch((e) => __awaiter(void 0, void 0, void 0, function* () {
     console.error(e);
-    yield prisma.$disconnect();
+    yield db_server_1.default.$disconnect();
     process.exit(1);
 }));
-// 1. Import the PrismaClient constructor from the @prisma/client node module
-// 2. Instantiate PrismaClient
-// 3. Define an async function named main to send queries to the database
-// 4. Call the main function
-// 5. Close the database connections when the script terminates
