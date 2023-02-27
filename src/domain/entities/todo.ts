@@ -1,9 +1,15 @@
-class todo{
-    constructor(
-        private id: number,
-        private title: string,
-        private userId: number,
-    ) {}
+ 
+ class todo{
+    private id: number;
+    private title: string;
+    private userId: number;
+
+    constructor(id: number, title: string, userId: number) {
+        this.id = id;
+        this.title = title;
+        this.userId = userId;
+    }
+
     public getId(): number {
         return this.id;
     }

@@ -1,44 +1,35 @@
-import db from '../../utils/db.server';
-import todo from '../../domain/entities/todo';
-  export class todoRepository {
-    public static async create(todo: { title: string; userId: number; }) {
-        const newTodo = await db.todo.create({
-            data: {
-                title: todo.title,
-                userId: todo.userId,
-            },
-        });
-        return newTodo;
+import baseRepository from "./baseRepository";
+import Todo from "../../domain/entities/todo";
+import add from "../../application/interfaces/usecases/todo/addTodo";
+import get from "../../application/interfaces/usecases/todo/getTodo";
+import show from "../../application/interfaces/usecases/todo/getAll";
+import del from "../../application/interfaces/usecases/todo/deleteTodo";
+import edit from "../../application/interfaces/usecases/todo/editTodo";
+
+
+export default class todoRepository extends baseRepository<Todo> {
+    public async get(id: number): Promise<Todo> {
+        const todo = await get.todoShow(id);
+        return new Todo(todo.id, todo.title, todo.userId);
     }
-    public static async findByTitle(title: string) {
-        const todo = await db.todo.findUnique({
-            where: {
-                
-            },
-        });
-        return todo;
+    public async getAll(): Promise<Todo[]> {
+        const todos = await show.todoIndex();
+        return todos.map((todo) => new Todo(todo.id, todo.title, todo.userId));
     }
-    public static async findAll() {
-        const todos = await db.todo.findMany();
-        return todos;
+
+    //getUserId() is not defined
+    public async create(entity: Todo): Promise<Todo> {
+        const todo = await add.todoCreate(entity.getTitle(), entity.getUserId());
+        return new Todo(todo.id, todo.title, todo.userId);
     }
-    public static async update(todo: { id: number; title: string; }) {
-        const updatedTodo = await db.todo.update({
-            where: {
-                id: todo.id,
-            },
-            data: {
-                title: todo.title,
-            },
-        });
-        return updatedTodo;
+    public async update(id: number, entity: Todo): Promise<Todo> {
+        const todo = await edit.todoUpdate(id, entity.getTitle());
+        return new Todo(todo.id, todo.title, todo.userId);
     }
-    public static async delete(todo: { id: number; }) {
-        const deletedTodo = await db.todo.delete({
-            where: {
-                id: todo.id,
-            },
-        });
-        return deletedTodo;
+    public async delete(id: number): Promise<Todo> {
+        const todo = await del.todoDelete(id);
+        return new Todo(todo.id, todo.title, todo.userId);
     }
 }
+
+

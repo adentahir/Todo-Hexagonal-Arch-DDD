@@ -11,4 +11,4 @@ const todoDelete = async (id: number) => {
     return todo;
 }
 
-export { todoDelete };
+export default { todoDelete };

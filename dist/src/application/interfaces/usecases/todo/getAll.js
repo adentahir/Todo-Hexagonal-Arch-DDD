@@ -12,20 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUser = exports.userCreate = void 0;
-const user_1 = __importDefault(require("../../domain/entities/user"));
-const userRepository_1 = __importDefault(require("../../infrastructure/repositories/userRepository"));
-const userCreate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password } = req.body;
-    const repo = new userRepository_1.default();
-    const result = yield repo.create(new user_1.default(name, email, password));
-    res.status(201).json({ result });
+const db_server_1 = __importDefault(require("../../../../utils/db.server"));
+const todoIndex = () => __awaiter(void 0, void 0, void 0, function* () {
+    const todos = yield db_server_1.default.todo.findMany();
+    return todos;
 });
-exports.userCreate = userCreate;
-const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const repo = new userRepository_1.default();
-    const result = yield repo.get(Number(id));
-    res.status(200).json({ result });
-});
-exports.getUser = getUser;
+exports.default = { todoIndex };

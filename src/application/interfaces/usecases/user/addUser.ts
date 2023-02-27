@@ -1,4 +1,4 @@
-import db from '../../../utils/db.server';
+import db from '../../../../utils/db.server';
 
  const userCreate = async (name: string, email: string, password: string) => {
     const user = await db.user.create({
@@ -11,4 +11,4 @@ import db from '../../../utils/db.server';
     return user;
 }
 
-export { userCreate };
+export default { userCreate };

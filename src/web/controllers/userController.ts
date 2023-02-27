@@ -1,5 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import db from '../../utils/db.server';
+import User from '../../domain/entities/user';
+import userRepository from '../../infrastructure/repositories/userRepository';
+
+
+const userCreate = async (req : Request, res : Response) => {
+    const {name, email, password} = req.body
+    const repo = new userRepository();
+    const result = await repo.create(new User(name, email, password));
+    res.status(201).json({result});
+}
+
+const getUser = async (req : Request, res : Response) => {
+    const {id} = req.params
+    const repo = new userRepository();
+    const result = await repo.get(Number(id));
+ 
+    res.status(200).json({result});
+}
 
 // const jwt = require("jsonwebtoken");
 
@@ -24,18 +42,18 @@ import db from '../../utils/db.server';
   
 //   }
 
-const userCreate = (req : Request, res : Response) => {
+// const userCreate = (req : Request, res : Response) => {
     
-    const {name, email, password} = req.body
-    const result = db.user.create({
+//     const {name, email, password} = req.body
+//     const result = db.user.create({
         
-        data: {
-            name: name,
-            email: email,
-            password: password,
+//         data: {
+//             name: name,
+//             email: email,
+//             password: password,
            
-        },
-    })
+//         },
+//     })
 
     // jwt.sign({ user: result }, "secretkey", (err: any, token: any) => {
 
@@ -47,8 +65,6 @@ const userCreate = (req : Request, res : Response) => {
     
     //   });
     
-    res.status(201).json({result});
-}
 
 // const loginUser = (req: Request, res: Response) => {
 //     const decoded = jwt.verify(req.token, "secretkey");
@@ -76,4 +92,4 @@ const userCreate = (req : Request, res : Response) => {
 
     
 
-export { userCreate };
+export { userCreate, getUser };

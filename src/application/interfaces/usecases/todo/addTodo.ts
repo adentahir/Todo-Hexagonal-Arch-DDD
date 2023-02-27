@@ -4,16 +4,15 @@ import db from '../../../../utils/db.server';
 const todoCreate = (title: string, userId: number) => {
     
     
-    const result = db.todo.create({
+     const result = db.todo.create({
     
         data: {
             title: title,
             userId: userId,
-        }
-
-                
+        }       
     });
-    return result;
+
+    return result
 }
 
-export { todoCreate };
+export default { todoCreate };

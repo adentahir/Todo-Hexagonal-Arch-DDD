@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class user {
-    constructor(id, email, password) {
+    constructor(id, email, name) {
         this.id = id;
+        this.name = name;
         this.email = email;
-        this.password = password;
     }
     getId() {
         return this.id;

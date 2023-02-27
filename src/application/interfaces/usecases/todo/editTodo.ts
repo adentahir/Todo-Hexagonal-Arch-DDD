@@ -8,12 +8,12 @@ const todoUpdate = async (id: number, title: string) => {
         where: { id: id || undefined },
     })
     const updatedTodo = await db.todo.update({
-        where: { id: id || undefined },
-        data: { title: title || undefined },
+        where: { id: id },
+        data: { title: title },
     })
 
     return updatedTodo;
     
     }
 
-    export { todoUpdate };
+    export default { todoUpdate };

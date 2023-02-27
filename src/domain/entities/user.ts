@@ -1,12 +1,13 @@
 class user {
     id: number;
     email: string;
-    password: string;
+    password!: string;
+    name: string;
 
-    constructor(id: number , email: string, password: string) {
+    constructor(id: number, email: string, name: string) {
         this.id = id;
+        this.name = name;
         this.email = email;
-        this.password = password;
     }
 
     public getId(): number {
