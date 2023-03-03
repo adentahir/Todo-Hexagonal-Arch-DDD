@@ -1,4 +1,4 @@
-import baseRepository from "./baseRepository";
+import baseRepository from "../../domain/baseRepository";
 import User from "../../domain/entities/user";
 import add from "../../application/interfaces/usecases/user/addUser";
 import get from "../../application/interfaces/usecases/user/getUser";
@@ -6,6 +6,15 @@ import find from "../../application/interfaces/usecases/user/getUser";
 
 
 export default class userRepository extends baseRepository<User> {
+    getAll(): Promise<User[]> {
+        throw new Error("Method not implemented.");
+    }
+    update(id: number, item: User): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
+    delete(id: number): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
     public async get(id: number): Promise<User> {
         const user = await get.findUser(id);
         if (!user)

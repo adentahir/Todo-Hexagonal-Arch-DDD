@@ -1,4 +1,4 @@
-class dateTime {
+class DateTimeValueObject {
   private _value: Date;
 
   constructor(value: Date) {
@@ -9,3 +9,5 @@ class dateTime {
     return this._value;
   }
 }
+
+export default DateTimeValueObject;

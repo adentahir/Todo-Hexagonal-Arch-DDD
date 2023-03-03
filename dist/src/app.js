@@ -6,10 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const todoRouter_1 = __importDefault(require("./web/routes/todoRouter"));
 const userRouter_1 = __importDefault(require("./web/routes/userRouter"));
+const authRouter_1 = __importDefault(require("./web/routes/authRouter"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+// first round of validqations 
 app.use(todoRouter_1.default);
 app.use(userRouter_1.default);
+app.use(authRouter_1.default);
 app.listen(3000, () => {
     console.log('server is running on port 3000');
 });

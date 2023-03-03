@@ -12,12 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const baseRepository_1 = __importDefault(require("./baseRepository"));
+const baseRepository_1 = __importDefault(require("../../domain/baseRepository"));
 const user_1 = __importDefault(require("../../domain/entities/user"));
 const addUser_1 = __importDefault(require("../../application/interfaces/usecases/user/addUser"));
 const getUser_1 = __importDefault(require("../../application/interfaces/usecases/user/getUser"));
 const getUser_2 = __importDefault(require("../../application/interfaces/usecases/user/getUser"));
 class userRepository extends baseRepository_1.default {
+    getAll() {
+        throw new Error("Method not implemented.");
+    }
+    update(id, item) {
+        throw new Error("Method not implemented.");
+    }
+    delete(id) {
+        throw new Error("Method not implemented.");
+    }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield getUser_1.default.findUser(id);

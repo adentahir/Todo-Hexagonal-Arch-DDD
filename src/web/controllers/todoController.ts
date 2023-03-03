@@ -1,113 +1,66 @@
+import  Todo  from "../../application/interfaces/todoEntity";
+import TodoDto, { ITodoDto } from "../../application/interfaces/DTOs/todoDto"; 
+import  todoService  from "../../application/services/todoService";
 import { Request, Response } from 'express';
-import Todo from "../../domain/entities/todo"
-import TodoRepository from "../../infrastructure/repositories/todoRepository"  
 
-const todoIndex = async (req : Request, res : Response) => {
-    const todoRepository = new TodoRepository()
-    const todos = await todoRepository.getAll()
-    res.json(todos)
+ class todoController
+{
+    private readonly todoService: todoService;
+    constructor(todoService: todoService) {
+        this.todoService = todoService;
+    }
+
+
+
+     todoIndex = async (req : Request, res : Response) => {
+    try {
+        const todoItems = await this.todoService.getAll();
+        res.status(200).json(todoItems);
+      } catch (error: any) {
+        res.status(500).json({ message: error.message });
+      }
 }
 
-const todoShow = async (req : Request, res : Response) => {
-    const { id } = req.params
-    const todoRepository = new TodoRepository()
-    const todo = await todoRepository.get(Number(id))
-    res.status(200).json({todo});
+ todoShow = async (req : Request, res : Response) => {
+    const id = req.params.id
+    try {
+        const todoItem = await this.todoService.getById(Number(id));
+        res.status(201).json(todoItem);
+      } catch (error: any) {
+        res.status(500).json({ message: error.message });
+      }
+
 }
 
-const todoCreate = async (req : Request, res : Response) => {
-    const {title, userId} = req.body
-    const todoRepository = new TodoRepository()
-    const todo = await todoRepository.create(new Todo(0, title, userId))
-    res.status(201).json({todo});
+ todoCreate = async (req : Request, res : Response) => {
+    const todoDto = req.body as ITodoDto;
+    try {
+        const todoItem = await this.todoService.create(todoDto);
+        res.status(201).json(todoItem.serialize());
+      } catch (error: any) {
+        res.status(500).json({ message: error.message });
+      }
 }
 
-const todoUpdate = async (req : Request, res : Response) => {
-    const { id } = req.params
-    const {title} = req.body
-    const todoRepository = new TodoRepository()
-    const todo = await todoRepository.update(Number(id), new Todo(Number(id), title, 0))
-    res.status(200).send('Todo updated successfully');
+ todoUpdate = async (req : Request, res : Response) => {
+    const id = req.params.id
+    const todoDto = req.body as ITodoDto;
+    try {
+        const todoItem = await this.todoService.update(Number(id), todoDto);
+        res.status(200).json(todoItem);
+      } catch (error: any) {
+        res.status(500).json({ message: error.message });
+      }
 }
 
-const todoDelete = async (req : Request, res : Response) => {
-    const { id } = req.params
-    const todoRepository = new TodoRepository()
-    const todo = await todoRepository.delete(Number(id))
-    res.status(200).send('Todo deleted successfully');
+ todoDelete = async ({params:{id}} : Request, {status} : Response) => {
+    try {
+        const todoItem = await this.todoService.delete(Number(id));
+        status(200).json(todoItem);
+      } catch (err ) {
+        status(500).json({ message: Error});
+      }
+ }
 }
 
-export { todoIndex, todoShow, todoCreate, todoUpdate, todoDelete }
-
-
-// const todoIndex = async (req : Request, res : Response) => {
-   
-    
-//     const todos = await db.todo.findMany()
-//     res.json(todos)
-// }
-
-// const todoShow = async (req : Request, res : Response) => {
-//     const { id } = req.params
-//     const todo = await db.todo.findUnique({
-//         where: {
-//             id: parseInt(id),
-//         }
-//     })
-
-//     if(!todo) res.status(404).send('The todo with the given ID was not found');
-//     res.status(200).json({todo});
-   
-// }
-
-// const todoCreate = (req : Request, res : Response) => {
-    
-//     const {name, email, password, title} = req.body
-//     const result = db.user.create({
-        
-//         data: {
-//             name: name,
-//             email: email,
-//             password: password,
-//             todos: {
-//                 create: {
-//                     title: title,
-//                 },
-//             },
-//         },
-//     })
-
-    
-    
-//     res.status(201).json({result});
-// }
-
-// const todoUpdate = async (req : Request, res : Response) => {
-
-//     const { id } = req.params
-//     const todoData = await db.todo.findUnique({
-//         where: { id: Number(id) || undefined },
-//     })
-//     const updatedTodo = await db.todo.update({
-//         where: { id: Number(id) || undefined },
-//         data: { title: req.body.title || undefined },
-//     })
-
-//     res.status(200).send('Todo updated successfully').json({updatedTodo});
-    
-//     }
-
-// const todoDelete = async (req : Request, res : Response) => {
-
-//     const { id } = req.params
-//     const todo = await db.todo.delete({
-//       where: {
-//         id: Number(id),
-//       },
-//     })
-//     res.json(todo)
-// }
-
-
-    
-
+export default todoController

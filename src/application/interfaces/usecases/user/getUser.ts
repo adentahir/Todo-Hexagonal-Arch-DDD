@@ -9,6 +9,7 @@ const findUser = async (id: number) => {
     if (user) {
         return user;
     }
+    return null;
 }
 
 export default { findUser };

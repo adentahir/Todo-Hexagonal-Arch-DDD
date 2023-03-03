@@ -4,7 +4,7 @@ import User from '../../domain/entities/user';
 import userRepository from '../../infrastructure/repositories/userRepository';
 
 
-const userCreate = async (req : Request, res : Response) => {
+ const userCreate = async (req : Request, res : Response) => {
     const {name, email, password} = req.body
     const repo = new userRepository();
     const result = await repo.create(new User(name, email, password));

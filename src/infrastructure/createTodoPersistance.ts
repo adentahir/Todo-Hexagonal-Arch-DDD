@@ -9,14 +9,3 @@ type TodoData = {
 export interface createTodoPersistance {
     create(todo: TodoData): void;
 }
-
-// export todoData {
-//     export(todo: TodoData): void;
-//     constructor{
-//         private exportTodoData: TodoData;
-//     }
-//     exexute(){
-//         const todo = this.exportTodoData;
-
-        
-// }

@@ -1,3 +1,4 @@
+import EmailVo from "../valueObjects/emailValueObject";
 class user {
     id: number;
     email: string;
@@ -8,6 +9,16 @@ class user {
         this.id = id;
         this.name = name;
         this.email = email;
+    }
+
+    updateEmail(e: string){
+        const new_email_vo = new EmailVo(e)
+
+        if(new_email_vo.is_error()){
+            return;
+        }
+
+        this.email = new_email_vo.value
     }
 
     public getId(): number {

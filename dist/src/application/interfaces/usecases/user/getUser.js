@@ -22,5 +22,6 @@ const findUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     if (user) {
         return user;
     }
+    return null;
 });
 exports.default = { findUser };
