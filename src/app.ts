@@ -1,18 +1,14 @@
-import express, { Request, Response } from 'express';
-import todoRouter from './web/routes/todoRouter';
-import userRouter from './web/routes/userRouter';
-import authRouter from './web/routes/authRouter';
+import express, { Request, Response } from "express";
+import { bootstrapDi } from "./infrastructure/di-container";
+import { bootstrapRouters } from "./web/routes";
 const app = express();
 
-
 app.use(express.json());
-// first round of validqations 
-app.use(todoRouter);
-app.use(userRouter);
-app.use(authRouter);
+// first round of validqations
 
-app.listen(3000, ()=>{
-    console.log('server is running on port 3000');
-})
+const diContainer = bootstrapDi();
+bootstrapRouters(app, diContainer);
 
-
+app.listen(3000, () => {
+	console.log("server is running on port 3000");
+});

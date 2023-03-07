@@ -1,14 +1,14 @@
-import express, { Request, Response } from 'express';
-import todoController from '../controllers/todoController';
-import getUser from '../../application/interfaces/usecases/user/getUser';
+import express, { Request, Response } from "express";
+import TodoController from "../controllers/todoController";
 
-const todoRouter = express.Router();
+export const getTodoRouter = (todoController: TodoController) => {
+	const todoRouter = express.Router();
 
- //todoIndex, todoShow, todoCreate, todoUpdate, todoDelete
-// todoRouter.get('/', todoIndex);
-// todoRouter.get('/todos/:id', todoShow);
-// todoRouter.post('/todos/add', todoCreate);
-// todoRouter.put('/todos/:id', todoUpdate);
-// todoRouter.delete('todos/:id', todoDelete);
+	todoRouter.get("/", todoController.getAll);
+	todoRouter.get("/todos/:id", todoController.todoShow);
+	todoRouter.post("/todos/add", todoController.todoCreate);
+	todoRouter.put("/todos/:id", todoController.todoUpdate);
+	todoRouter.delete("todos/:id", todoController.deleteTodo);
 
-export default todoRouter;
+	return todoRouter;
+};

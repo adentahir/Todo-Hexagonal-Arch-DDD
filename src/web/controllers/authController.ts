@@ -1,10 +1,5 @@
 import { NextFunction } from "express";
 
-export const googleOauthHandler = async (
-  
-  ) => {
-    
+export const googleOauthHandler = async () => {};
 
-  };
-
-  exports = googleOauthHandler;
+exports = googleOauthHandler;
