@@ -27,7 +27,6 @@ class TodoController {
 
 	todoCreate = async (req: Request, res: Response) => {
 		const todoDto: ITodoDto = req.body;
-		console.log(todoDto);
 		safeExec(res, async () => {
 			const todoItem = await this.todoService.create(todoDto);
 			res.status(201).json(todoItem);

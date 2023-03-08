@@ -4,6 +4,7 @@ import { bootstrapRouters } from "./web/routes";
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // first round of validqations
 
 const diContainer = bootstrapDi();

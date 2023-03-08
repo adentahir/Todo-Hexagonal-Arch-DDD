@@ -23,13 +23,21 @@ class TodoRepositoryPrisma extends TodoRepository {
 	}
 
 	public async create(todo: TodoDto): Promise<Todo> {
+		const { title, userId } = todo;
+		console.log("userId:", userId);
+
+		const user = await db.user.findUnique({ where: { id: userId } });
+		if (!user) {
+			throw new Error("User not found");
+		}
+
 		const newTodo = await db.todo.create({
 			data: {
-				title: todo.title,
-				userId: todo.userId,
+				title,
+				user: { connect: { id: userId } },
 			},
 		});
-		console.log(newTodo);
+
 		return new Todo(newTodo.id, newTodo.title, newTodo.userId);
 	}
 
