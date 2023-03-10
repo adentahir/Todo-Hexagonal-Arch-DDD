@@ -24,7 +24,6 @@ class TodoRepositoryPrisma extends TodoRepository {
 
 	public async create(todo: TodoDto): Promise<Todo> {
 		const { title, userId } = todo;
-		console.log("userId:", userId);
 
 		const user = await db.user.findUnique({ where: { id: userId } });
 		if (!user) {
@@ -50,9 +49,11 @@ class TodoRepositoryPrisma extends TodoRepository {
 	}
 
 	public async delete(id: number): Promise<Todo> {
+		console.log(id);
 		const deletedTodo = await db.todo.delete({
 			where: { id: id },
 		});
+
 		return new Todo(deletedTodo.id, deletedTodo.title, deletedTodo.userId);
 	}
 }

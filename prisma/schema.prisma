@@ -20,6 +20,7 @@ model user {
   id       Int     @id @default(autoincrement())
   email    String  @unique(map: "User_email_key")
   name     String?
-  password String  @unique(map: "User_password_key")
+  password String?
   todo     todo[]
+  googleId String? @unique(map: "User_googleId_key")
 }

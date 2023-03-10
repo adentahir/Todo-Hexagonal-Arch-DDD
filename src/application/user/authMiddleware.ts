@@ -4,6 +4,8 @@ import { env } from "process";
 
 interface GooglePayload {
 	email: string;
+	name: string;
+	googleId: string;
 }
 
 export const authMiddleware = (
@@ -27,7 +29,11 @@ export const authMiddleware = (
 		return res.status(401).json({ message: "Invalid token" });
 	}
 
-	const user = { email: googlePayload.email };
+	const user = {
+		email: googlePayload.email,
+		name: googlePayload.name,
+		googleId: googlePayload.googleId,
+	};
 	req.user = user;
 	next();
 };

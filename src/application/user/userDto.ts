@@ -8,6 +8,7 @@ class UserDto implements IUserDto {
 	email: string;
 	name: string;
 	password: string;
+
 	constructor(email: string, name: string, password: string) {
 		this.email = UserValidator.validateEmail(email);
 		this.name = UserValidator.validateName(name);

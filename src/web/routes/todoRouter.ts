@@ -8,7 +8,7 @@ export const getTodoRouter = (todoController: TodoController) => {
 	todoRouter.get("/todos/:id", todoController.todoShow);
 	todoRouter.post("/todos/add", todoController.todoCreate);
 	todoRouter.put("/todos/:id", todoController.todoUpdate);
-	todoRouter.delete("todos/:id", todoController.deleteTodo);
+	todoRouter.delete("/todos/:id", todoController.deleteTodo);
 
 	return todoRouter;
 };

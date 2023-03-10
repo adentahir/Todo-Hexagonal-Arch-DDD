@@ -4,6 +4,7 @@ import UserService from "../../application/user/userService";
 import userRepository from "../../domain/userRepository";
 import { IUserDto } from "../../application/user/userDto";
 import safeExec from "../../utils/safeExec";
+import { IauthDto } from "../../application/user/authDto";
 
 export default class UserController {
 	private readonly userService: UserService;
@@ -21,10 +22,27 @@ export default class UserController {
 		});
 	};
 
+	createGoogleUser = async (req: Request, res: Response) => {
+		const authDto = req.body as IauthDto;
+		safeExec(res, async () => {
+			const todoItem = await this.userService.createGoogleUser(authDto);
+
+			res.status(201).json(todoItem);
+		});
+	};
+
 	getUser = async (req: Request, res: Response) => {
 		const id = req.params.id;
 		safeExec(res, async () => {
 			const todoItem = await this.userService.getUser(Number(id));
+			res.status(201).json(todoItem);
+		});
+	};
+
+	getUserWithGoogle = async (req: Request, res: Response) => {
+		const googleId = req.params.googleId;
+		safeExec(res, async () => {
+			const todoItem = await this.userService.getUserWithGoogle(googleId);
 			res.status(201).json(todoItem);
 		});
 	};

@@ -21,7 +21,7 @@ class TodoController {
 		const id = req.params.id;
 		safeExec(res, async () => {
 			const todoItem = await this.todoService.getById(Number(id));
-			res.status(201).json(todoItem);
+			res.status(200).json(todoItem);
 		});
 	};
 

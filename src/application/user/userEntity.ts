@@ -6,6 +6,7 @@ export interface IUser {
 	email: string;
 	password: string;
 	name: string;
+	googleId?: string;
 }
 
 class user extends BaseEntity implements IUser {
@@ -13,8 +14,9 @@ class user extends BaseEntity implements IUser {
 	email: string;
 	password!: string;
 	name: string;
+	googleId?: string;
 
-	constructor(id: number, email: string, name: string) {
+	constructor(id: number, email: string, name: string, googleId?: string) {
 		super(id);
 		this.email = email;
 		this.name = name;
