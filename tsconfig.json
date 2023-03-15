@@ -7,10 +7,20 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "strict": true,
-    "skipDefaultLibCheck": true
-    
-  }, 
+    "skipDefaultLibCheck": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "./src/application/*"
+      ],
+      "@domain/*": [
+        "./src/domain/*"
+      ]
+    }
+  },
   "include": [
-    "src/"
-, "prisma/seed.ts"  ]
+    "src/",
+    "prisma/seed.ts"
+  ]
 }

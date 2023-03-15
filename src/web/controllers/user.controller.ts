@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../../application/user/userEntity";
-import UserService from "../../application/user/userService";
 import userRepository from "../../domain/userRepository";
 import { IUserDto } from "../../application/user/userDto";
 import safeExec from "../../utils/safeExec";
 import { IauthDto } from "../../application/user/authDto";
+import { NewUserDto } from "@app/dto/user.dto";
+import { UserService } from "@app/services/user.service";
 
-const mailjet = require("node-mailjet");
 export default class UserController {
 	private readonly userService: UserService;
 
@@ -15,10 +15,10 @@ export default class UserController {
 	}
 
 	userCreate = async (req: Request, res: Response) => {
-		const todoDto = req.body as IUserDto;
+		const dto = NewUserDto.create(req.body);
 		safeExec(res, async () => {
-			const todoItem = await this.userService.create(todoDto);
-			res.status(201).json(todoItem);
+			const user = await this.userService.createNewUser(dto);
+			res.status(201).json(user);
 		});
 	};
 
