@@ -74,7 +74,7 @@ describe("Todo routes", () => {
 	it("DELETE /todos/:id should delete an existing todo", (done) => {
 		chai
 			.request(app)
-			.delete("/todos/13")
+			.delete("/todos/40")
 			.end((err, res) => {
 				expect(res).to.have.status(200);
 				done();

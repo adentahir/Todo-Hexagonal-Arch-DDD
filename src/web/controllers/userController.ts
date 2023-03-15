@@ -6,6 +6,7 @@ import { IUserDto } from "../../application/user/userDto";
 import safeExec from "../../utils/safeExec";
 import { IauthDto } from "../../application/user/authDto";
 
+const mailjet = require("node-mailjet");
 export default class UserController {
 	private readonly userService: UserService;
 
@@ -17,7 +18,6 @@ export default class UserController {
 		const todoDto = req.body as IUserDto;
 		safeExec(res, async () => {
 			const todoItem = await this.userService.create(todoDto);
-			// make a serilize function in userEntity and use it here...
 			res.status(201).json(todoItem);
 		});
 	};
