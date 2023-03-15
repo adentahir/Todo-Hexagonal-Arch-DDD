@@ -1,7 +1,0 @@
-{
-    "eslint.enable": false,
-    "[typescript]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "rome.rome"
-    }
-}
