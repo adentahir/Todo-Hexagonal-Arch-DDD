@@ -1,22 +1,33 @@
 import { IUser, UserEntity } from "@domain/pseudo-entities/user/user.entity";
 import { IEntity } from "@domain/utils/base.entity";
+import { BaseDto } from "@app/dto/base.dto";
+import {UserNotFound, InvalidUserData} from "@domain/pseudo-entities/user/user.exceptions"
 
 type NewUserData = Omit<IUser, "verified" | keyof IEntity>;
 
-export abstract class BaseDto<T> {
-  abstract serialize(): T;
-}
+
+
 
 export class NewUserDto {
   private constructor(readonly data: NewUserData) { }
-
   // result monad
+  // perform validation
+  // create dto with validated data
+  // return dto
   static create(data: unknown): NewUserDto {
-    // perform validation
-    // create dto with validated data
-    // return dto
+    if (!data) {
+      throw new UserNotFound();
+    }
+
+    if (typeof data !== "object") {
+      throw new InvalidUserData();
+    }
+    
+    return new NewUserDto(data as NewUserData);
   }
 }
+
+
 
 type PublicUser = Omit<IUser, "password">;
 

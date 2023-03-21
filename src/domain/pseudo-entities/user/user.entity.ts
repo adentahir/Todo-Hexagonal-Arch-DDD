@@ -78,6 +78,15 @@ export class UserEntity extends BaseEntity implements IUser {
 	}
 
 	serialize(): IUser {
-		return {};
+		const {id, email, name, password, verified, createdAt, updatedAt} = this
+		return {
+			id,
+			email,
+			name,
+			password,
+			verified,
+			createdAt,
+			updatedAt
+		};	
 	}
 }
