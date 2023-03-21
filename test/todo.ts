@@ -3,7 +3,7 @@ import chaiHttp from "chai-http";
 import express from "express";
 
 import { DIContainer, bootstrapDi } from "../src/infrastructure/di-container";
-import { getTodoRouter } from "../src/web/routes/todo.router";
+import { getTodoRouter } from "../src/web/routes/todoRouter";
 
 chai.use(chaiHttp);
 const expect = chai.expect;

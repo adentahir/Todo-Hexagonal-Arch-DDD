@@ -1,10 +1,11 @@
-import {BaseRepository} from "@domain/utils/base.repository";
-import {TodoEntity} from "@domain/entities/todo/todo.entity";
+import baseRepository from "./baseRepository";
+import Todo from "../application/todo/todoEntity";
+import TodoDto from "../application/todo/todoDto";
 
-export default abstract class TodoRepository extends BaseRepository<TodoEntity> {
-	abstract fetch(id: TodoEntity["id"]): Promise<TodoEntity>;
-	abstract fetchAll(): Promise<TodoEntity[]>;
-	abstract insert(entity: TodoEntity): Promise<TodoEntity>;
-	abstract update(entity: TodoEntity): Promise<TodoEntity>;
-	abstract delete(id: TodoEntity["id"]): Promise<TodoEntity>;
+export default abstract class TodoRepository extends baseRepository<Todo> {
+	abstract get(id: number): Promise<Todo>;
+	abstract getAll(): Promise<Todo[]>;
+	abstract create(entity: TodoDto): Promise<Todo>;
+	abstract update(id: number, entity: TodoDto): Promise<Todo>;
+	abstract delete(id: number): Promise<Todo>;
 }
