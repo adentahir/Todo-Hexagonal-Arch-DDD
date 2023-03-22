@@ -1,10 +1,8 @@
-import TodoController from "../web/controllers/todoController";
-import TodoService from "../application/todo/todoService";
-import UserService from "../application/user/userService";
-import UserController from "../web/controllers/userController";
-
-import { getTodoRouter } from "../web/routes/todoRouter";
-import TodoRepositoryPrisma from "./repositories/todoRepositoryPrisma";
+import TodoController from "../web/controllers/todo.controller";
+import TodoService from "../application/services/todo.service";
+import {UserService} from "@app/services/user.service";
+import UserController from "../web/controllers/user.controller";
+import TodoRepositoryPrisma from "./repositories/todo.repository.prisma";
 import TodoRepository from "@domain/entities/todo/todo.repository";
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
 import { UserRepositoryPrisma } from "./repositories/user.repository.prisma";
@@ -37,10 +35,12 @@ export const bootstrapDi = (): DIContainer => {
 
 function bootstrapRepos(): Repos {
 	// init client
-	let client: PrismaClient;
+	let client: PrismaClient;	
+		client = new PrismaClient();
+	
 
 	const di: Repos = {
-		todoRepository: new TodoRepositoryPrisma(),
+		todoRepository: new TodoRepositoryPrisma(client),
 		userRepository: new UserRepositoryPrisma(client),
 	};
 

@@ -3,7 +3,7 @@ import mailjet from "node-mailjet";
 const mj = mailjet.apiConnect(
 	"8b3597f8448a6f97b12f54be0c8c570f",
 	"a55a2353ff8a4849cf1c7db88f30c6de",
-);
+); 
 
 const request = async () => {
 	try {
