@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import safeExec from "../../utils/safeExec";
 import { NewTodoDto } from "../../application/dto/todo.dto";
 import { InvalidTodoData } from "../../domain/entities/todo/todo.exceptions";
+import { handleResult } from "../../utils/handleResult";
 
 class TodoController {
   private readonly todoService: TodoService;
@@ -26,28 +27,43 @@ class TodoController {
     });
   };
 
-  todoCreate = async (req: Request, res: Response) => {
-    const todoResult = NewTodoDto.create(req.body);
+  
 
-    safeExec(res, async () => {
-      todoResult.map(async (todoDto: NewTodoDto) => {
+  
+  todoCreate = async (req: Request, res: Response) => {
+    const todoDtoResult = NewTodoDto.create(req.body);
+
+    const handleTodoDtoResult = handleResult<NewTodoDto, InvalidTodoData, void>(
+      (error: InvalidTodoData) => {
+        res.status(400).json({ message: error.message });
+      },
+      async (todoDto: NewTodoDto) => {
         const todoItem = await this.todoService.createTodo(todoDto);
         res.status(201).json(todoItem);
-      }).mapErr((error: InvalidTodoData) => {
-        res.status(400).json({ message: error.message });
-      });
+      }
+    );
+
+    safeExec(res, async () => {
+      handleTodoDtoResult(todoDtoResult);
     });
   };
 
+
+
   todoUpdate = async (req: Request, res: Response) => {
-    const todoResult = NewTodoDto.create(req.body);
-    safeExec(res, async () => {
-      todoResult.map(async (todoDto: NewTodoDto) => {
+    const todoDtoResult = NewTodoDto.create(req.body);
+    const handleTodoDtoResult = handleResult<NewTodoDto, InvalidTodoData, void>(
+      (error: InvalidTodoData) => {
+      res.status(400).json({ message: error.message });
+    }, async (todoDto: NewTodoDto) => {
+
         const todoItem = await this.todoService.update(todoDto);
-        res.status(200).json(todoItem);
-      }).mapErr((error: InvalidTodoData) => {
-        res.status(400).json({ message: error.message });
-      });
+        res.status(201).json(todoItem);
+    }
+    );
+
+    safeExec(res, async () => {
+      handleTodoDtoResult(todoDtoResult)
     });
   };
 

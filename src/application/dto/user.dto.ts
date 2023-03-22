@@ -2,7 +2,8 @@ import { IUser, UserEntity } from "@domain/pseudo-entities/user/user.entity";
 import { IEntity } from "@domain/utils/base.entity";
 import { BaseDto } from "@app/dto/base.dto";
 import {UserNotFound, InvalidUserData} from "@domain/pseudo-entities/user/user.exceptions"
-
+import { Ok, Err, Result } from 'oxide.ts';
+  
 type NewUserData = Omit<IUser, "verified" | keyof IEntity>;
 
 
@@ -14,16 +15,16 @@ export class NewUserDto {
   // perform validation
   // create dto with validated data
   // return dto
-  static create(data: unknown): NewUserDto {
+  static create(data: unknown): Result<NewUserDto, InvalidUserData> {
     if (!data) {
-      throw new UserNotFound();
+      return Err(new UserNotFound("No user data found"));
     }
 
     if (typeof data !== "object") {
-      throw new InvalidUserData();
+      return Err(new InvalidUserData("Invalid user data"));
     }
     
-    return new NewUserDto(data as NewUserData);
+    return Ok(new NewUserDto(data as NewUserData));
   }
 }
 
