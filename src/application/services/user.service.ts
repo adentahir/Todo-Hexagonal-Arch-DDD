@@ -1,6 +1,8 @@
 import { UserEntity } from "@domain/pseudo-entities/user/user.entity";
 // import request from "../../infrastructure/mailjet";
 import { NewUserDto, UserDto } from "@app/dto/user.dto";
+import { Ok, Err, Result } from 'oxide.ts';
+import { InvalidUserData, UserExists } from "@domain/pseudo-entities/user/user.exceptions";
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
 
 export class UserService {
@@ -11,7 +13,7 @@ export class UserService {
 		this.userRepository = userRepository;
 	}
 
-	async createNewUser({ data }: NewUserDto): Promise<UserDto> {
+	async createNewUser({ data }: NewUserDto): Promise<Result<UserDto, InvalidUserData | UserExists>> {
 		const newUser = UserEntity.createWithPassword(
 			data.email,
 			data.name,
@@ -19,8 +21,11 @@ export class UserService {
 		);
 
 		const user = await this.userRepository.insert(newUser);
+		if(!user){
+			return Err(new UserExists());
+		}	
 
-		return UserDto.from(user);
+		return Ok(UserDto.from(user));
 	}
 
 	async createOpenIdUser(): UserDto {
