@@ -1,19 +1,22 @@
-import { BaseEntity } from "../../domain/entities/baseEntity";
-import { TodoValidator } from "./todoValidator";
+import { BaseEntity, IEntity } from "@domain/utils/base.entity";
 
-export interface ITodo {
-	id: number;
+
+export interface ITodo extends IEntity {
 	title: string;
-	userId: number;
+	userId: string;
 }
-export class Todo extends BaseEntity {
+export class TodoEntity extends BaseEntity implements ITodo {
 	private _title: string;
-	readonly userId: number;
+	readonly userId: string;
 
-	constructor(id: number, title: string, userId: number) {
-		super(id);
-		this._title = TodoValidator.validateTitle(title);
-		this.userId = TodoValidator.validateUserId(userId);
+	constructor( title: string, userId: string) {
+		super();
+		this._title = title;
+		this.userId = userId;
+	}
+	static create(title: string, userId: string): TodoEntity{
+		const todo = new TodoEntity(title, userId);
+		return todo;
 	}
 
 	public get title(): string {
@@ -21,41 +24,27 @@ export class Todo extends BaseEntity {
 	}
 
 	public set title(title: string) {
-		this._title = TodoValidator.validateTitle(title);
+		this._title = title;
 	}
 
-	static fromOther(other: ITodo): Todo {
-		const { id, title, userId } = other;
-		return new Todo(id, title, userId);
+	static fromOther(other: ITodo): TodoEntity {
+		const ent = new TodoEntity(other.title, other.userId);
+		ent._copyBaseProps(other)
+		return ent
 	}
 
 	serialize(): ITodo {
-		const { id, title, userId } = this;
+		const { id, title, userId, createdAt, updatedAt } = this;
 		return {
 			id,
 			title,
 			userId,
+			createdAt,
+			updatedAt
 		};
 	}
 
-	// rome-ignore lint/suspicious/noExplicitAny: <explanation>
-	static deserialize(data: any): Todo {
-		if (typeof data !== "object" || data === null) {
-			throw new Error("Invalid data format");
-		}
-
-		const { id, title, userId } = data;
-
-		return new Todo(
-			TodoValidator.validateId(id),
-			TodoValidator.validateTitle(title),
-			TodoValidator.validateUserId(userId),
-		);
-	}
+	  
 }
 
-export default Todo;
 
-// export function isPositiveInteger(value: any): value is number {
-//   return typeof value === "number" && Number.isInteger(value) && value > 0;
-// }

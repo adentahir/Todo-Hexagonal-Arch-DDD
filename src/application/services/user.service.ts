@@ -1,12 +1,10 @@
 import { UserEntity } from "@domain/pseudo-entities/user/user.entity";
-// import request from "../../infrastructure/mailjet";
 import { NewUserDto, UserDto } from "@app/dto/user.dto";
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
 
 export class UserService {
 	constructor(
 		private readonly userRepository: UserRepository,
-		// add mail service
 	) {
 		this.userRepository = userRepository;
 	}
@@ -23,21 +21,10 @@ export class UserService {
 		return UserDto.from(user);
 	}
 
-	async createOpenIdUser(): UserDto {
+	async createOpenIdUser(): Promise<UserDto> {
 		const s = UserEntity.create("", "");
+		return UserDto.from(s)
 	}
 
-	// async create(userDto: IUserDto): Promise<User> {
-	// 	await request();
-	// 	return await this.userRepository.create(userDto);
-	// }
-	// async createGoogleUser(authDto: authDto): Promise<User> {
-	// 	return await this.userRepository.CreateWithGoogle(authDto);
-	// }
-	// async getUser(id: number): Promise<User> {
-	// 	return await this.userRepository.get(id);
-	// }
-	// async getUserWithGoogle(googleId: string): Promise<User> {
-	// 	return await this.userRepository.findByGoogleId(googleId);
-	// }
+	
 }

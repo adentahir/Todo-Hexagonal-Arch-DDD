@@ -5,6 +5,7 @@
     "target": "es6",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "noEmitOnError": true,
     "esModuleInterop": true,
     "strict": true,
     "skipDefaultLibCheck": true,
@@ -16,6 +17,12 @@
       ],
       "@domain/*": [
         "./src/domain/*"
+      ],
+      "@infra/*": [
+        "./src/infrastructure/*"
+      ],
+      "@web/*": [
+        "./src/web/*"
       ]
     }
   },
