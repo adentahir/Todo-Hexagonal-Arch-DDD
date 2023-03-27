@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { DIContainer } from "../../infrastructure/di-container";
-import { getTodoRouter } from "./todo.router";
-import { getUserRouter } from "./user.router";
-
+import { getTodoRouter } from "./todoRouter";
+import { getUserRouter } from "./userRouter";
+import authRouter from "./authRouter";
 
 export const bootstrapRouters = (app: Express, diContainer: DIContainer) => {
 	const todoRouter = getTodoRouter(diContainer.todoController);
