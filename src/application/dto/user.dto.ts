@@ -1,7 +1,7 @@
 import { IUser, UserEntity } from "@domain/pseudo-entities/user/user.entity";
 import { IEntity } from "@domain/utils/base.entity";
 import { BaseDto } from "@app/dto/base.dto";
-import {UserNotFound, InvalidUserData} from "@domain/pseudo-entities/user/user.exceptions"
+import {InvalidUserData, InvalidPasswordError, InvalidEmail} from "@domain/pseudo-entities/user/user.exceptions"
 import { Ok, Err, Result } from 'oxide.ts';
   
 type NewUserData = Omit<IUser, "verified" | keyof IEntity>;
@@ -15,16 +15,31 @@ export class NewUserDto {
   // perform validation
   // create dto with validated data
   // return dto
-  static create(data: unknown): Result<NewUserDto, InvalidUserData> {
-    if (!data) {
-      return Err(new UserNotFound("No user data found"));
+  static create(data: unknown): Result<NewUserDto, InvalidUserData | InvalidPasswordError> {
+    // Perform validation
+    if (typeof data !== "object" || data === null) {
+      return Err(new InvalidUserData("Invalid user data: data must be an object"));
     }
-
-    if (typeof data !== "object") {
-      return Err(new InvalidUserData("Invalid user data"));
+  
+    const typedData = data as Partial<NewUserData>;
+    const { email, name, password } = typedData;
+  
+    if (typeof email !== "string" || email.trim().length === 0) {
+      return Err(new InvalidEmail("Invalid user data: email must be a non-empty string"));
     }
     
-    return Ok(new NewUserDto(data as NewUserData));
+  
+    if (typeof name !== "string" || name.trim().length === 0) {
+      return Err(new InvalidUserData("Invalid user data: name must be a non-empty string"));
+    }
+  
+    // Add this block to validate the password field
+    if (typeof password !== "string" || password.trim().length === 0) {
+      return Err(new InvalidPasswordError("Invalid user data: password must be a non-empty string"));
+    }
+  
+    // Create dto with validated data
+    return Ok(new NewUserDto(typedData as NewUserData));
   }
 }
 

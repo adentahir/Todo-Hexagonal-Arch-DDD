@@ -1,14 +1,19 @@
-import { Result } from 'oxide.ts';
+import { Response } from "express";
+import { Result } from "oxide.ts";
+import { DomainError } from "@domain/utils/base.exceptions"; 	
 
-export function handleResult<T, E, R>(
-  handleErr: (error: E) => R,
-  handleSuccess: (value: T) => R
-): (result: Result<T, E>) => R {
-  return (result: Result<T, E>) => {
-    if (result.isOk()) {
-      return handleSuccess(result.unwrap());
-    } else {
-      return handleErr(result.unwrapErr());
-    }
-  };
+export async function handleResult<T>(
+  res: Response,
+  result: Result<T, DomainError>,
+  successStatus: number
+): Promise<void> {
+  if (result.isOk()) {
+    res.status(successStatus).json(result.unwrap());
+  } else {
+    throw result.unwrapErr();
+  }
 }
+
+
+
+
