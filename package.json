@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@carbonteq/hexapp": "^0.11.0",
     "@prisma/client": "^4.11.0",
     "@types/passport-google-oauth20": "^2.0.11",
     "axios": "^1.3.4",

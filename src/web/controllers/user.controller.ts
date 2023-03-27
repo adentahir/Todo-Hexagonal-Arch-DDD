@@ -1,22 +1,28 @@
-import { Request, Response } from "express";
-import safeExec from "../../utils/safeExec";
+import { Request, Response, NextFunction } from "express";
 import { NewUserDto } from "@app/dto/user.dto";
 import { UserService } from "@app/services/user.service";
+import { handleResult } from "../../utils/handleResult";
 
 export default class UserController {
-	private readonly userService: UserService;
+  private readonly userService: UserService;
 
-	constructor(userService: UserService) {
-		this.userService = userService;
-	}
+  constructor(userService: UserService) {
+    this.userService = userService;
+  }
 
-	userCreate = async (req: Request, res: Response) => {
-		const dto = NewUserDto.create(req.body);
-		safeExec(res, async () => {
-			const user = await this.userService.createNewUser(dto);
-			res.status(201).json(user);
-		});
-	};
-
-
+  userCreate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userDtoResult = NewUserDto.create(req.body);
+      if (userDtoResult.isOk()) {
+        const userDto = userDtoResult.unwrap();
+        const userResult = await this.userService.createNewUser(userDto);
+        return handleResult(res, userResult, 201);
+      } else {
+        
+        next(userDtoResult.unwrapErr());
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
 }

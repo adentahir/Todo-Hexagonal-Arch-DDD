@@ -1,8 +1,7 @@
 import TodoService from "@app/services/todo.service";
-import { Request, Response } from "express";
-import safeExec from "../../utils/safeExec";
+import { NextFunction, Request, Response } from "express";
 import { NewTodoDto } from "../../application/dto/todo.dto";
-import { InvalidTodoData } from "../../domain/entities/todo/todo.exceptions";
+import { handleResult } from "../../utils/handleResult";
 
 class TodoController {
   private readonly todoService: TodoService;
@@ -12,52 +11,50 @@ class TodoController {
   }
 
   getAll = async (req: Request, res: Response) => {
-    safeExec(res, async () => {
-      const todoItems = await this.todoService.getAll();
-      res.status(200).json(todoItems);
-    });
+    const todoItemsResult = await this.todoService.getAll();
+    await handleResult(res, todoItemsResult, 200);
   };
 
   todoShow = async (req: Request, res: Response) => {
     const id = req.params.id;
-    safeExec(res, async () => {
-      const todoItem = await this.todoService.getById(id);
-      res.status(200).json(todoItem);
-    });
+    const todoItemResult = await this.todoService.getById(id);
+    await handleResult(res, todoItemResult, 200);
   };
 
-  todoCreate = async (req: Request, res: Response) => {
-    const todoResult = NewTodoDto.create(req.body);
-
-    safeExec(res, async () => {
-      todoResult.map(async (todoDto: NewTodoDto) => {
-        const todoItem = await this.todoService.createTodo(todoDto);
-        res.status(201).json(todoItem);
-      }).mapErr((error: InvalidTodoData) => {
-        res.status(400).json({ message: error.message });
-      });
-    });
+  todoCreate = async (req: Request, res: Response, next: NextFunction) => {
+    try{ 
+      const todoDtoResult = NewTodoDto.create(req.body);
+      if (todoDtoResult.isOk()) {
+        const todoItemResult = await this.todoService.createTodo(todoDtoResult.unwrap());
+        return handleResult(res, todoItemResult, 201);
+      } else{
+        next(todoDtoResult.unwrapErr());
+      }
+    } catch (error) {
+      next(error);
+    }
   };
 
-  todoUpdate = async (req: Request, res: Response) => {
-    const todoResult = NewTodoDto.create(req.body);
-    safeExec(res, async () => {
-      todoResult.map(async (todoDto: NewTodoDto) => {
-        const todoItem = await this.todoService.update(todoDto);
-        res.status(200).json(todoItem);
-      }).mapErr((error: InvalidTodoData) => {
-        res.status(400).json({ message: error.message });
-      });
-    });
+  todoUpdate = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const todoDtoResult = NewTodoDto.create(req.body);
+      if (todoDtoResult.isOk()) {
+    const todoItemResult = await this.todoService.update(todoDtoResult.unwrap());
+    return handleResult(res, todoItemResult, 200);
+      } else{
+        next(todoDtoResult.unwrapErr());
+        }
+    } catch (error) {
+      next(error);
+    }
   };
 
   deleteTodo = async (req: Request, res: Response) => {
     const id = req.params.id;
-    safeExec(res, async () => {
-      const todoItem = await this.todoService.delete(id);
-      res.status(200).json(todoItem);
-    });
+    const todoItemResult = await this.todoService.delete(id);
+    await handleResult(res, todoItemResult, 200);
   };
+
 }
 
 export default TodoController;
