@@ -1,22 +1,19 @@
-import { BaseEntity, IEntity } from "@domain/utils/base.entity";
+import { BaseEntity } from "../../domain/entities/baseEntity";
+import { TodoValidator } from "./todoValidator";
 
-
-export interface ITodo extends IEntity {
+export interface ITodo {
+	id: number;
 	title: string;
-	userId: string;
+	userId: number;
 }
-export class TodoEntity extends BaseEntity implements ITodo {
+export class Todo extends BaseEntity {
 	private _title: string;
-	readonly userId: string;
+	readonly userId: number;
 
-	constructor( title: string, userId: string) {
-		super();
-		this._title = title;
-		this.userId = userId;
-	}
-	static create(title: string, userId: string): TodoEntity{
-		const todo = new TodoEntity(title, userId);
-		return todo;
+	constructor(id: number, title: string, userId: number) {
+		super(id);
+		this._title = TodoValidator.validateTitle(title);
+		this.userId = TodoValidator.validateUserId(userId);
 	}
 
 	public get title(): string {
@@ -24,27 +21,41 @@ export class TodoEntity extends BaseEntity implements ITodo {
 	}
 
 	public set title(title: string) {
-		this._title = title;
+		this._title = TodoValidator.validateTitle(title);
 	}
 
-	static fromOther(other: ITodo): TodoEntity {
-		const ent = new TodoEntity(other.title, other.userId);
-		ent._copyBaseProps(other)
-		return ent
+	static fromOther(other: ITodo): Todo {
+		const { id, title, userId } = other;
+		return new Todo(id, title, userId);
 	}
 
 	serialize(): ITodo {
-		const { id, title, userId, createdAt, updatedAt } = this;
+		const { id, title, userId } = this;
 		return {
 			id,
 			title,
 			userId,
-			createdAt,
-			updatedAt
 		};
 	}
 
-	  
+	// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+	static deserialize(data: any): Todo {
+		if (typeof data !== "object" || data === null) {
+			throw new Error("Invalid data format");
+		}
+
+		const { id, title, userId } = data;
+
+		return new Todo(
+			TodoValidator.validateId(id),
+			TodoValidator.validateTitle(title),
+			TodoValidator.validateUserId(userId),
+		);
+	}
 }
 
+export default Todo;
 
+// export function isPositiveInteger(value: any): value is number {
+//   return typeof value === "number" && Number.isInteger(value) && value > 0;
+// }
