@@ -1,4 +1,6 @@
 import { BaseEntity, IEntity } from "@domain/utils/base.entity";
+import { InvalidTodoData } from "./todo.exceptions";
+import { Result } from "oxide.ts"; 
 
 
 export interface ITodo extends IEntity {
@@ -14,9 +16,9 @@ export class TodoEntity extends BaseEntity implements ITodo {
 		this._title = title;
 		this.userId = userId;
 	}
-	static create(title: string, userId: string): TodoEntity{
+	static create(title: string, userId: string): Result<TodoEntity, InvalidTodoData> {
 		const todo = new TodoEntity(title, userId);
-		return todo;
+		return Result<TodoEntity>(todo);
 	}
 
 	public get title(): string {

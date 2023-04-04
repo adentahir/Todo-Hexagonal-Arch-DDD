@@ -11,18 +11,14 @@ export default class UserController {
   }
 
   userCreate = async (req: Request, res: Response, next: NextFunction) => {
-    try {
       const userDtoResult = NewUserDto.create(req.body);
       if (userDtoResult.isOk()) {
         const userDto = userDtoResult.unwrap();
         const userResult = await this.userService.createNewUser(userDto);
         return handleResult(res, userResult, 201);
-      } else {
-        
-        next(userDtoResult.unwrapErr());
       }
-    } catch (error) {
-      next(error);
+     else {
+      next(userDtoResult);
     }
   };
 }

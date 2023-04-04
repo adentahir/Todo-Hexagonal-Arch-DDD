@@ -1,45 +1,30 @@
 import { ITodo, TodoEntity } from "@domain/entities/todo/todo.entity";
 import { IEntity } from "@domain/utils/base.entity";
-import {InvalidTodoData} from "../../domain/entities/todo/todo.exceptions"
-import { BaseDto } from "../dto/base.dto"
-import { Ok, Err, Result } from 'oxide.ts';
+import { BaseDto, DtoValidationResult} from '@carbonteq/hexapp';
+import { z } from 'zod';
 
 type NewTodoData = Omit<ITodo, "id" | "createdAt" | "updatedAt"| keyof IEntity>;
 
 
-export class NewTodoDto {
-  private constructor(readonly data: NewTodoData) { }
+export class NewTodoDto extends BaseDto {
+  private static readonly schema = z.object({
+    title: z.string().nonempty(),
+    userId: z.string().nonempty(),
+  });
 
+  private constructor(readonly data: NewTodoData) { super()}
   // result monad 
-  static create(data: unknown): Result<NewTodoDto, InvalidTodoData> {
-    // Perform validation
-    if (typeof data !== "object" || data === null) {
-      return Err(new InvalidTodoData("Invalid todo data: data must be an object"));
-    }
-  
-    const typedData = data as Partial<NewTodoData>;
-    const { title, userId } = typedData;
-  
-    if (typeof title !== "string" || title.trim().length === 0) {
-      return Err(new InvalidTodoData("Invalid todo data: title must be a non-empty string"));
-    }
-  
-    if (typeof userId !== "string" || userId.trim().length === 0) {
-      return Err(new InvalidTodoData("Invalid todo data: userId must be a non-empty string"));
-    }
-  
-    // Create dto with validated data
-    return Ok(new NewTodoDto(typedData as NewTodoData));
+  static create(data: unknown): DtoValidationResult<NewTodoDto> {
+    const res = BaseDto.validate<{title: string, userId: string}>(NewTodoDto.schema, data)
+    return res.map((data) => new NewTodoDto(data));
   }
   
 }
 
 
-
-
 type PublicTodo = Omit<NewTodoData, "updatedAt" | "createdAt" | "id">;
 
-export class TodoDto extends BaseDto<NewTodoData> {
+export class TodoDto extends BaseDto {
   private constructor(private readonly data: NewTodoData) {
     super();
   }

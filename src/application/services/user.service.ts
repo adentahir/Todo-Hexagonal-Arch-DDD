@@ -1,8 +1,8 @@
 import { UserEntity } from "@domain/pseudo-entities/user/user.entity";
 import { NewUserDto, UserDto } from "@app/dto/user.dto";
-import { Ok, Err, Result } from 'oxide.ts';
 import { InvalidUserData, UserExists } from "@domain/pseudo-entities/user/user.exceptions";
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
+import { AppResult, Monadic } from "@carbonteq/hexapp";
 
 export class UserService {
 	constructor(
@@ -11,24 +11,22 @@ export class UserService {
 		this.userRepository = userRepository;
 	}
 
-	async createNewUser({ data }: NewUserDto): Promise<Result<UserDto, InvalidUserData | UserExists>> {
+	async createNewUser({ data }: NewUserDto): Promise<AppResult<UserDto>> {
 		const newUser = UserEntity.createWithPassword(
 			data.email,
 			data.name,
 			data.password,
 		);
 
-		const user = await this.userRepository.insert(newUser);
-		if(!user){
-			return Err(new UserExists());
-		}	
+		const res = await this.userRepository.insert(newUser);
+		
 
-		return Ok(UserDto.from(user));
+		return AppResult.Ok(UserDto.from(res));
 	}
 
-	async createOpenIdUser(): Promise<UserDto> {
+	async createOpenIdUser(): Promise<AppResult<UserDto>> {
 		const s = UserEntity.create("", "");
-		return UserDto.from(s)
+		return AppResult.Ok(UserDto.from(s));
 	}
 
 	

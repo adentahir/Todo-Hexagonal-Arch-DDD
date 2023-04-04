@@ -1,10 +1,9 @@
 import { Response } from "express";
-import { Result } from "oxide.ts";
-import { DomainError } from "@domain/utils/base.exceptions"; 	
+import { AppResult } from "@carbonteq/hexapp";
 
 export async function handleResult<T>(
   res: Response,
-  result: Result<T, DomainError>,
+  result: AppResult<T>,
   successStatus: number
 ): Promise<void> {
   if (result.isOk()) {
@@ -13,7 +12,3 @@ export async function handleResult<T>(
     throw result.unwrapErr();
   }
 }
-
-
-
-

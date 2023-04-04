@@ -2,10 +2,9 @@ import { TodoEntity } from "@domain/entities/todo/todo.entity";
 import { TodoDto, NewTodoDto } from "@app/dto/todo.dto";
 import TodoRepository from "@domain/entities/todo/todo.repository";
 import { sendSlackMessage } from "../../infrastructure/slack";
-import { Ok, Err, Result } from 'oxide.ts';
+import { AppError, AppResult, Monadic} from '@carbonteq/hexapp';
 import { env } from "process";
 import * as dotenv from "dotenv";
-import { TodoNotFound, InvalidTodoData } from "@domain/entities/todo/todo.exceptions";
 
 dotenv.config();
 
@@ -14,49 +13,58 @@ const slackWebhookUrl = env.SLACK_WEBHOOK_URL as string;
 export default class TodoService {
   constructor(private readonly todoRepository: TodoRepository) {}
 
-  async createTodo({data}: NewTodoDto): Promise<Result<TodoDto, InvalidTodoData>> {
-    const newTodo = TodoEntity.create(data.title, data.userId);
-    const createdTodo = await this.todoRepository.insert(newTodo);
-    const message = `New Task: ${createdTodo.title}`;
-    sendSlackMessage(slackWebhookUrl, message);
+  async createTodo({data}: NewTodoDto): Promise<AppResult<TodoDto>> {
 
-    return Ok(TodoDto.from(createdTodo));
-  }
-
-  async getAll(): Promise<Result<TodoEntity[], never>> {
-    const todoItems = await this.todoRepository.fetchAll();
-    return Ok(todoItems);
-  }
-
-  async getById(id: TodoEntity["id"]): Promise<Result<TodoEntity, TodoNotFound>> {
-    const todoItem = await this.todoRepository.fetch(id);
-    if (!todoItem) {
-      return Err(new TodoNotFound());
-    }
-    return Ok(todoItem);
-  }
-
-  async update({data}: NewTodoDto): Promise<Result<TodoDto, InvalidTodoData | TodoNotFound>> {
     
     const newTodo = TodoEntity.create(data.title, data.userId);
-    const updatedTodo = await this.todoRepository.update(newTodo);
+    if (newTodo.isOk()) {
+    // const insertRes = await Monadic.bindAsync(newTodo, async (e) => {
+    //   return await this.todoRepository.insert(e);
+    // });
+    const createdTodo = await this.todoRepository.insert(newTodo.unwrap());
+    const message = `New Task: ${createdTodo.title}`;
+    sendSlackMessage(slackWebhookUrl, message);
+    return AppResult.Ok(TodoDto.from(createdTodo));
+    }
+    else {
+      return AppResult.Err(AppError.NotFound("Todo not found"));
+    } 
+  }
+
+    async getAll(): Promise<AppResult<TodoEntity[]>> {
+    const todoItems = await this.todoRepository.fetchAll();
+    return AppResult.Ok(todoItems);
+  }
+
+  async getById(id: TodoEntity["id"]): Promise<AppResult<TodoEntity>> {
+    const todoItem = await this.todoRepository.fetch(id);
+    if (!todoItem) {
+      return AppResult.Err(AppError.NotFound("Todo not found"));
+    }
+    return AppResult.Ok(todoItem);
+  }
+
+  async update({data}: NewTodoDto): Promise<AppResult<TodoDto>> {
+    
+    const newTodo = TodoEntity.create(data.title, data.userId);
+    const updatedTodo = await this.todoRepository.update(newTodo.unwrap());
     if (!updatedTodo) {
-      return Err(new TodoNotFound());
+      return AppResult.Err(AppError.NotFound("Todo not found"));
     }
     const message = `Task #${updatedTodo.id} updated to: ${updatedTodo.title} :thumbsup:`;
     sendSlackMessage(slackWebhookUrl, message);
 
-    return Ok(TodoDto.from(updatedTodo));
+    return AppResult.Ok(TodoDto.from(updatedTodo));
   }
 
-  async delete(id: TodoEntity["id"]): Promise<Result<TodoEntity, TodoNotFound>> {
+  async delete(id: TodoEntity["id"]): Promise<AppResult<TodoEntity>> {
     const deletedTodo = await this.todoRepository.delete(id);
     if (!deletedTodo) {
-      return Err(new TodoNotFound());
+      return AppResult.Err(AppError.NotFound("Todo not found"));
     }
     const message = `Task #${id} completed :tada:`;
     sendSlackMessage(slackWebhookUrl, message);
 
-    return Ok(deletedTodo);
+    return AppResult.Ok(deletedTodo);
   }
 }

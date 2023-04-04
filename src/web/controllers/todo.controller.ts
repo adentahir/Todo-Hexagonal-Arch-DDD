@@ -22,31 +22,24 @@ class TodoController {
   };
 
   todoCreate = async (req: Request, res: Response, next: NextFunction) => {
-    try{ 
       const todoDtoResult = NewTodoDto.create(req.body);
       if (todoDtoResult.isOk()) {
         const todoItemResult = await this.todoService.createTodo(todoDtoResult.unwrap());
         return handleResult(res, todoItemResult, 201);
-      } else{
-        next(todoDtoResult.unwrapErr());
       }
-    } catch (error) {
-      next(error);
-    }
+      else {
+        next(todoDtoResult);
+      }
   };
 
   todoUpdate = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-      const todoDtoResult = NewTodoDto.create(req.body);
-      if (todoDtoResult.isOk()) {
+    const todoDtoResult = NewTodoDto.create(req.body);
+    if (todoDtoResult.isOk()) {
     const todoItemResult = await this.todoService.update(todoDtoResult.unwrap());
     return handleResult(res, todoItemResult, 200);
-      } else{
-        next(todoDtoResult.unwrapErr());
-        }
-    } catch (error) {
-      next(error);
-    }
+  } else {
+    next(todoDtoResult);
+  }
   };
 
   deleteTodo = async (req: Request, res: Response) => {
