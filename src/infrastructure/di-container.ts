@@ -7,6 +7,9 @@ import TodoRepository from "@domain/entities/todo/todo.repository";
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
 import { UserRepositoryPrisma } from "./repositories/user.repository.prisma";
 import { PrismaClient } from "@prisma/client";
+import { EmailService } from "@app/services/external/email/email.service";
+import { EmailServiceMailjet } from "./email/email.service.mailjet";
+
 
 export interface DIContainer {
 	userController: UserController;
@@ -22,10 +25,11 @@ export const bootstrapDi = (): DIContainer => {
 	// instantiate repos  with async await
 	const repos: Repos = bootstrapRepos();
 
+	const emailService = new EmailServiceMailjet();
 	// instantiate services
 	const todoService = new TodoService(repos.todoRepository);
-	const userService = new UserService(repos.userRepository);
-
+	const userService = new UserService(repos.userRepository, emailService);
+	
 	// instantiate controllers
 	const todoController = new TodoController(todoService);
 	const userController = new UserController(userService);
