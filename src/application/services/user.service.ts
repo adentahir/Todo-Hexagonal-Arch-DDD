@@ -1,14 +1,18 @@
 import { UserEntity } from "@domain/pseudo-entities/user/user.entity";
 import { NewUserDto, UserDto } from "@app/dto/user.dto";
-import { InvalidUserData, UserExists } from "@domain/pseudo-entities/user/user.exceptions";
+import { EmailService, SendEmailData, SendEmailError, SendEmailResponse } from '@app/services/external/email/email.service';
 import { UserRepository } from "@domain/pseudo-entities/user/user.repository";
-import { AppResult, Monadic } from "@carbonteq/hexapp";
+import { AppResult} from "@carbonteq/hexapp";
+import { Result } from "oxide.ts/dist";
+
 
 export class UserService {
 	constructor(
 		private readonly userRepository: UserRepository,
+		private readonly emailService: EmailService,
 	) {
 		this.userRepository = userRepository;
+		this.emailService = emailService;
 	}
 
 	async createNewUser({ data }: NewUserDto): Promise<AppResult<UserDto>> {
@@ -19,6 +23,16 @@ export class UserService {
 		);
 
 		const res = await this.userRepository.insert(newUser);
+
+		  // Send welcome email
+		  const sendEmailData: Pick<SendEmailData, 'to'> = {
+			to: data.email,
+		  };
+	  
+		  const emailResult: Result<SendEmailResponse, SendEmailError> = await this.emailService.sendWelcomeEmail(sendEmailData as SendEmailData);
+		  if (emailResult.isErr()) {
+			AppResult.fromErr(emailResult.unwrapErr());
+		  }
 		
 
 		return AppResult.Ok(UserDto.from(res));
